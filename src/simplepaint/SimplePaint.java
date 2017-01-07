@@ -7,6 +7,7 @@ package simplepaint;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 
 
@@ -38,6 +39,7 @@ public class SimplePaint extends JApplet {
    public static void main(String[] args) {
       JFrame window = new JFrame("Simple Paint");
       SimplePaintPanel content = new SimplePaintPanel();
+      //standalone app call here, init could be used outside this main method
       window.setContentPane(content);
       window.setSize(600,480);
       window.setLocation(100,100);
@@ -92,6 +94,7 @@ public class SimplePaint extends JApplet {
       
       private Graphics graphicsForDrawing;  // A graphics context for the panel
                                   // that is used to draw the user's curve.
+      private BufferedImage bufferedImage;
       
       
       /**
