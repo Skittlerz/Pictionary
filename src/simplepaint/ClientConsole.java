@@ -76,6 +76,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   @Override
     public void actionPerformed(ActionEvent ae) {
         BufferedImage bi = dp.getScreenShot();
+        client.handleImageFromClientUI(bi);
         //return bi;
         //dp.loadDrawing(bi);
     }
