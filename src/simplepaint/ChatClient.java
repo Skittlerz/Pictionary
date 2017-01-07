@@ -55,8 +55,8 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) 
   {
-    if(msg instanceof BufferedImage){
-        BufferedImage image = (BufferedImage) msg;
+    if(msg instanceof ImageIcon){
+        ImageIcon image = (ImageIcon) msg;
         clientUI.display(image);
     }else{
         clientUI.display(msg.toString());

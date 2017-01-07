@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -121,8 +122,8 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     System.out.println("> " + message);
   }
   
-  public void display(BufferedImage bi){
-      DrawingPanel.loadDrawing(bi);
+  public void display(ImageIcon ii){
+      DrawingPanel.loadDrawing(ii);
   }
   
   //Class methods ***************************************************

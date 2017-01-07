@@ -101,10 +101,10 @@ class DrawingPanel extends JPanel implements
         yPos = y;
     }
 
-    public static void loadDrawing(BufferedImage bi) {
+    public static void loadDrawing(ImageIcon ii) {
         //opens a message dialog and displays the image parameter
-        JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(bi)));
-        System.out.println("w:" + bi.getWidth() + " h:" + bi.getHeight());
+        JOptionPane.showMessageDialog(null, new JLabel(ii));
+        System.out.println("w:" + ii.getIconWidth() + " h:" + ii.getIconHeight());
     }
 
     public BufferedImage getScreenShot() {
