@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 class DrawingPanel extends JPanel implements 
     MouseListener, MouseMotionListener {
     
-     
 
     // The image that will store what was drawn. In the
     // mouseDragged method, the painting operations will
@@ -32,6 +31,8 @@ class DrawingPanel extends JPanel implements
     private BufferedImage bufferedImage;
 
     private int xPos, yPos;//mouse positions
+    
+    Color drawColor = Color.BLACK;
 
     public DrawingPanel() {
         addMouseListener(this);
@@ -73,7 +74,7 @@ class DrawingPanel extends JPanel implements
     {
         super.paintComponent(g);
         validateImage();
-
+        
         // Paint the bufferedImage which stores
         // what was drawn until now
         g.drawImage(bufferedImage, 0, 0, null);
@@ -94,8 +95,8 @@ class DrawingPanel extends JPanel implements
 
         // Paint directly into the bufferedImage here
         Graphics g = bufferedImage.getGraphics();
-        g.setColor(Color.BLACK);
-        g.drawOval(xPos, yPos, 30, 30);
+        g.setColor(drawColor);
+        g.drawLine(xPos, yPos, x, y);
         repaint();
         xPos = x;
         yPos = y;
@@ -118,7 +119,10 @@ class DrawingPanel extends JPanel implements
         g.dispose();
         return image;
     }
-
+    
+    public void setDrawColor(Color c){
+        drawColor = c;
+    }
     //unused abstract method
     @Override
     public void mouseClicked(MouseEvent me) {
