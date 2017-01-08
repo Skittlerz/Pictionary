@@ -103,6 +103,10 @@ public class TestClass extends JFrame implements ActionListener {
         {
             dp.setDrawColor(Color.BLUE);
         }
+        else if(ae.getSource() == clear)
+        {
+            dp.clearDrawing();
+        }
     }
     
 }

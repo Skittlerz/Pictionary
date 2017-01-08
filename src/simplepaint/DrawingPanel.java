@@ -107,6 +107,18 @@ class DrawingPanel extends JPanel implements
         JOptionPane.showMessageDialog(null, new JLabel(ii));
         System.out.println("w:" + ii.getIconWidth() + " h:" + ii.getIconHeight());
     }
+    
+    public void clearDrawing(){
+        
+        bufferedImage = new BufferedImage(
+                getWidth(), getHeight(), 
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bufferedImage.getGraphics();
+        g.setColor(getBackground());
+        g.fillRect(0,0,getWidth(),getHeight());
+        g.dispose();
+        repaint();
+    }
 
     public BufferedImage getScreenShot() {
 

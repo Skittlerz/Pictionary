@@ -35,6 +35,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
    * The instance of the client that created this ConsoleChat.
    */
   ChatClient client;
+  //elements used for drawing window
   DrawingPanel dp;
   JButton load, red, green, blue, black, clear;
 
@@ -106,7 +107,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
 
   @Override
     public void actionPerformed(ActionEvent ae) {
-        
+        //gets button that was clicked and executes appropriate action
         if(ae.getSource() == load)
         {
             BufferedImage bi = dp.getScreenShot();
@@ -128,6 +129,10 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         else if(ae.getSource() == blue)
         {
             dp.setDrawColor(Color.BLUE);
+        }
+        else if(ae.getSource() == clear)
+        {
+            dp.clearDrawing();
         }
        
     }
