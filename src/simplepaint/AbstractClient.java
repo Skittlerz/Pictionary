@@ -248,15 +248,8 @@ public abstract class AbstractClient implements Runnable
 
         // Concrete subclasses do what they want with the
         // msg by implementing the following method
+        handleMessageFromServer(msg);
         
-        //Images are handled differently
-        if(msg instanceof BufferedImage){
-            //BufferedImage bi;
-            //bi = (BufferedImage)msg;
-            //DrawingPanel.loadDrawing(bi);
-        }else{
-            handleMessageFromServer(msg);
-        }
       }
     }
     catch (Exception exception)
