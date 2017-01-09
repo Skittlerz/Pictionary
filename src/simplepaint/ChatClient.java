@@ -84,6 +84,21 @@ public class ChatClient extends AbstractClient
       
   }
   
+   /**
+   * Hook method called each time an exception is thrown by the
+   * client's thread that is waiting for messages from the server.
+   * The method may be overridden by subclasses.
+   *
+   * @param exception the exception raised.
+   */
+  protected void connectionException(Exception exception) 
+  {
+      System.out.println("Server disconnected");
+      //After implementing connection closed, call it here...
+      //
+      connectionClosed();
+  }
+  
 //  private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException{
 //    s.defaultWriteObject();
 //    // extract bytes from bufferedImage and write them

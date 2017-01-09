@@ -52,9 +52,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   {
     try 
     {
-      client= new ChatClient(host, port, this);
+        client= new ChatClient(host, port, this);
       
-      setSize(600, 600);
+        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //Set color, clear and send image buttons
