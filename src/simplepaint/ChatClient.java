@@ -95,33 +95,66 @@ public class ChatClient extends AbstractClient
   {
       System.out.println("Server disconnected");
       //After implementing connection closed, call it here...
-      //
       connectionClosed();
   }
   
-//  private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException{
-//    s.defaultWriteObject();
-//    // extract bytes from bufferedImage and write them
-//    //...
-//  }
-//  private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
-//    s.defaultReadObject();
-//    // read bytes and re-create bufferedImage
-//    //...
-//  }
+   /**
+   * Hook method called after a connection has been established.
+   * The default implementation does nothing.
+   * It may be overridden by subclasses to do anything they wish.
+   */
+  protected void connectionEstablished() 
+  { 
+      System.out.println("Connected to: " + super.getHost());
+  }
+  
   public void handleMessageFromClientUI(String message)
   {
     try
     {
       //differentiate between local and server commands
-      sendToServer(message);
+      if(message.charAt(0) == '#'){
+          handleCommandFromClientUI(message);
+      }else{
+        sendToServer(message);
+      }
     }
     catch(IOException e)
     {
       clientUI.display
-        ("Could not send message to server.  Terminating client.");
+        ("Could not send message to server. Terminating client.");
       quit();
     }
+  }
+  
+  public void handleCommandFromClientUI(String command){
+     
+    try{      
+        if(command.startsWith("#getPort")){
+            clientUI.display(String.valueOf(getPort()));
+        }else if(command.startsWith("#quit")){
+            quit();
+        }else if(command.startsWith("#logOff")){
+            closeConnection();
+        }else if(command.startsWith("#logOn")){
+            openConnection();
+        }else if(command.startsWith("#setHost")){
+            String[] commands = command.split(" ");
+            setHost(commands[1]);
+        }else if(command.startsWith("#getHost")){
+            clientUI.display(getHost());
+        }else if(command.startsWith("#setPort")){
+            String[] commands = command.split(" ");
+            int port = Integer.parseInt(commands[1]);
+            setPort(port);  
+        }else{
+            clientUI.display("Unknown command");
+        }
+    }catch(IOException e){
+        clientUI.display
+        ("Could not send message to server. Terminating client.");
+    }
+      
   }
   
   /**
@@ -134,6 +167,7 @@ public class ChatClient extends AbstractClient
       closeConnection();
     }
     catch(IOException e) {}
+    
     System.exit(0);
   }
 }
