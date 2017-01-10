@@ -126,7 +126,11 @@ public class ChatClient extends AbstractClient
       quit();
     }
   }
-  
+  /**
+   * Method called to handle commands. 
+   * Commands must begin with #
+   * @param command the command sent by user.
+   */
   public void handleCommandFromClientUI(String command){
      
     try{      
@@ -139,14 +143,22 @@ public class ChatClient extends AbstractClient
         }else if(command.startsWith("#logOn")){
             openConnection();
         }else if(command.startsWith("#setHost")){
-            String[] commands = command.split(" ");
-            setHost(commands[1]);
+            if(!isConnected()){
+                String[] commands = command.split(" ");
+                setHost(commands[1]);
+            }else{
+                clientUI.display("Error: Must logoff to change host.");
+            }
         }else if(command.startsWith("#getHost")){
             clientUI.display(getHost());
         }else if(command.startsWith("#setPort")){
-            String[] commands = command.split(" ");
-            int port = Integer.parseInt(commands[1]);
-            setPort(port);  
+            if(!isConnected()){
+                String[] commands = command.split(" ");
+                int port = Integer.parseInt(commands[1]);
+                setPort(port); 
+            }else{
+                clientUI.display("Error: Must logoff to change port.");
+            }
         }else{
             clientUI.display("Unknown command");
         }

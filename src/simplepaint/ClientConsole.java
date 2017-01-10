@@ -4,14 +4,21 @@ package simplepaint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 
 /**
@@ -37,7 +44,10 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   ChatClient client;
   //elements used for drawing window
   DrawingPanel dp;
-  JButton load, red, green, blue, black, clear;
+  JButton load, red, green, blue, black, clear, send;
+  JTextArea display;
+  JTextField input;
+  private final static String newline = "\n";
 
   
   //Constructors ****************************************************
@@ -53,49 +63,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     try 
     {
         client= new ChatClient(host, port, this);
-      
-        setSize(600, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        //Set color, clear and send image buttons
-        JPanel top = new JPanel();
-        black = new JButton("Black");
-        black.setBackground(Color.BLACK);
-        black.setForeground(Color.WHITE);
-        red = new JButton("Red");
-        red.setBackground(Color.RED);
-        red.setForeground(Color.WHITE);
-        green = new JButton("Green");
-        green.setBackground(Color.GREEN);
-        green.setForeground(Color.WHITE);
-        blue = new JButton("Blue");
-        blue.setBackground(Color.BLUE);
-        blue.setForeground(Color.WHITE);
-        clear = new JButton("Clear");
-        clear.setBackground(Color.DARK_GRAY);
-        clear.setForeground(Color.WHITE);
-        load = new JButton("Send Image");
-        
-        load.addActionListener(this);
-        black.addActionListener(this);
-        red.addActionListener(this);
-        green.addActionListener(this);
-        blue.addActionListener(this);
-        clear.addActionListener(this);
-        
-        top.add(black);
-        top.add(red);
-        top.add(green);
-        top.add(blue);
-        top.add(clear);
-        top.add(load);
-        
-        dp = new DrawingPanel();
-        dp.setBackground(Color.WHITE);
-
-        add(top, BorderLayout.NORTH);
-        add(dp, BorderLayout.CENTER);
-        setVisible(true);
+        init();
     } 
     catch(IOException exception) 
     {
@@ -103,6 +71,76 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
                 + " Terminating client.");
       System.exit(1);
     }
+  }
+  /**
+   * Initialize GUI 
+   */
+  public void init(){
+      setSize(800, 600);
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+      //Set color, clear and send image buttons
+      JPanel top = new JPanel();
+      black = new JButton("Black");
+      black.setBackground(Color.BLACK);
+      black.setForeground(Color.WHITE);
+      red = new JButton("Red");
+      red.setBackground(Color.RED);
+      red.setForeground(Color.WHITE);
+      green = new JButton("Green");
+      green.setBackground(Color.GREEN);
+      green.setForeground(Color.WHITE);
+      blue = new JButton("Blue");
+      blue.setBackground(Color.BLUE);
+      blue.setForeground(Color.WHITE);
+      clear = new JButton("Clear");
+      clear.setBackground(Color.DARK_GRAY);
+      clear.setForeground(Color.WHITE);
+      load = new JButton("Send Image");
+      
+      load.addActionListener(this);
+      black.addActionListener(this);
+      red.addActionListener(this);
+      green.addActionListener(this);
+      blue.addActionListener(this);
+      clear.addActionListener(this);
+        
+      top.add(black);
+      top.add(red);
+      top.add(green);
+      top.add(blue);
+      top.add(clear);
+      top.add(load);
+      
+      JPanel right = new JPanel();
+      JPanel controls = new JPanel();
+      controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+      //add text display
+      display = new JTextArea(30,30);
+      display.setEditable(false); // set textArea non-editable
+      JScrollPane scroll = new JScrollPane(display);
+      scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      //add input text box
+      JLabel enter = new JLabel("Send a message:");
+      input = new JTextField(10);
+      input.addActionListener(this);
+      //add button to send message
+      send = new JButton("Send");
+      send.addActionListener(this);
+      //add components to boxlayout panel
+      controls.add(scroll);
+      controls.add(enter);
+      controls.add(input);
+      controls.add(send);
+        
+      dp = new DrawingPanel();
+      dp.setBackground(Color.WHITE);
+
+      add(top, BorderLayout.NORTH);
+      add(controls, BorderLayout.EAST);
+      add(dp, BorderLayout.CENTER);
+      setVisible(true);
+      setTitle("Pictionary - Janky Student Edition");
   }
 
   @Override
@@ -133,6 +171,12 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         else if(ae.getSource() == clear)
         {
             dp.clearDrawing();
+        }
+        else if(ae.getSource() == send || ae.getSource() == input)
+        {
+            displayInput(input.getText());
+            client.handleMessageFromClientUI(input.getText());
+            input.setText("");
         }
        
     }
@@ -174,10 +218,16 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   public void display(String message) 
   {
     System.out.println("> " + message);
+    //displays in console text area 
+    display.append(message + newline);
   }
   
   public void display(ImageIcon ii){
       DrawingPanel.loadDrawing(ii);
+  }
+  
+  public void displayInput(String message){
+      display.append(">" + message + newline);
   }
   
   //Class methods ***************************************************
