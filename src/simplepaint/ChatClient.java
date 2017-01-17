@@ -44,6 +44,25 @@ public class ChatClient extends AbstractClient
     this.clientUI = clientUI;
     openConnection();
   }
+  
+   public ChatClient(String host, int port, String userName, ChatIF clientUI) 
+    throws IOException 
+  {
+    super(host, port); //Call the superclass constructor
+    this.clientUI = clientUI;
+    openConnection();
+    sendToServer("#login " + userName);
+  }
+   
+  public ChatClient(String host, int port, String userName, String room, ChatIF clientUI) 
+    throws IOException 
+  {
+    super(host, port); //Call the superclass constructor
+    this.clientUI = clientUI;
+    openConnection();
+    sendToServer("#join " + room);
+    sendToServer("#login " + userName);
+  }
 
   
   //Instance methods ************************************************
@@ -59,6 +78,8 @@ public class ChatClient extends AbstractClient
         ImageIcon image = (ImageIcon) msg;
         clientUI.display(image);
     }else{
+        //Testing
+        System.out.println("ChatClient HandleMessageFromServer "+ clientUI);
         clientUI.display(msg.toString());
     }
   }
@@ -134,24 +155,31 @@ public class ChatClient extends AbstractClient
   public void handleCommandFromClientUI(String command){
      
     try{      
-        if(command.startsWith("#getPort")){
+        if(command.startsWith("#getPort"))
+        {
             clientUI.display(String.valueOf(getPort()));
-        }else if(command.startsWith("#quit")){
+        }else if(command.startsWith("#quit"))
+        {
             quit();
-        }else if(command.startsWith("#logOff")){
+        }else if(command.startsWith("#logOff"))
+        {
             closeConnection();
-        }else if(command.startsWith("#logOn")){
+        }else if(command.startsWith("#logOn"))
+        {
             openConnection();
-        }else if(command.startsWith("#setHost")){
+        }else if(command.startsWith("#setHost"))
+        {
             if(!isConnected()){
                 String[] commands = command.split(" ");
                 setHost(commands[1]);
             }else{
                 clientUI.display("Error: Must logoff to change host.");
             }
-        }else if(command.startsWith("#getHost")){
+        }else if(command.startsWith("#getHost"))
+        {
             clientUI.display(getHost());
-        }else if(command.startsWith("#setPort")){
+        }else if(command.startsWith("#setPort"))
+        {
             if(!isConnected()){
                 String[] commands = command.split(" ");
                 int port = Integer.parseInt(commands[1]);
@@ -159,8 +187,19 @@ public class ChatClient extends AbstractClient
             }else{
                 clientUI.display("Error: Must logoff to change port.");
             }
-        }else{
-            clientUI.display("Unknown command");
+        }else if(command.startsWith("#login"))
+        {
+            try{
+                sendToServer(command);
+            }catch(IOException e){
+                clientUI.display("Could not send command to server. Terminating client.");
+                e.printStackTrace();
+                quit();
+            }
+        }
+        else
+        {
+            sendToServer(command);
         }
     }catch(IOException e){
         clientUI.display

@@ -261,6 +261,8 @@ public abstract class AbstractClient implements Runnable
           closeAll();
         }
         catch (Exception ex) { }
+        
+        System.out.println(exception);
 
         connectionException(exception);
       }

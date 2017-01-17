@@ -45,7 +45,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   //elements used for drawing window
   DrawingPanel dp;
   JButton load, red, green, blue, black, clear, send;
-  JTextArea display;
+  JTextArea displayText;
   JTextField input;
   private final static String newline = "\n";
 
@@ -61,9 +61,39 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   public ClientConsole(String host, int port) 
   {
     try 
-    {
-        client= new ChatClient(host, port, this);
+    {   
         init();
+        client= new ChatClient(host,port,this);
+    } 
+    catch(IOException exception) 
+    {
+      System.out.println("Error: Can't setup connection!"
+                + " Terminating client.");
+      System.exit(1);
+    }
+  }
+  
+  public ClientConsole(String host, int port, String user) 
+  {
+    try 
+    {   
+        init();
+        client= new ChatClient(host,port,user,this);   
+    } 
+    catch(IOException exception) 
+    {
+      System.out.println("Error: Can't setup connection!"
+                + " Terminating client.");
+      System.exit(1);
+    }
+  }
+  
+  public ClientConsole(String host, int port, String user, String room) 
+  {
+    try 
+    {   
+        init();
+        client= new ChatClient(host,port,user,room,this);    
     } 
     catch(IOException exception) 
     {
@@ -116,9 +146,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       JPanel controls = new JPanel();
       controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
       //add text display
-      display = new JTextArea(30,30);
-      display.setEditable(false); // set textArea non-editable
-      JScrollPane scroll = new JScrollPane(display);
+      displayText = new JTextArea(30,30);
+      displayText.setEditable(false); // set textArea non-editable
+      JScrollPane scroll = new JScrollPane(displayText);
       scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       //add input text box
       JLabel enter = new JLabel("Send a message:");
@@ -174,7 +204,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         }
         else if(ae.getSource() == send || ae.getSource() == input)
         {
-            displayInput(input.getText());
+            //displayInput(input.getText());
             client.handleMessageFromClientUI(input.getText());
             input.setText("");
         }
@@ -217,9 +247,12 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
    */
   public void display(String message) 
   {
-    System.out.println("> " + message);
+    System.out.println(">>>>> " + message);
     //displays in console text area 
-    display.append(message + newline);
+    System.out.println(displayText);
+    
+    
+    displayText.append(message+newline);
   }
   
   public void display(ImageIcon ii){
@@ -227,7 +260,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   }
   
   public void displayInput(String message){
-      display.append(">" + message + newline);
+      displayText.append(">" + message+newline);
   }
   
   //Class methods ***************************************************
@@ -241,7 +274,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   {
     String host = "";
     int port = 0;  //The port number
-
+    String user;
+    String room;
+    
     try
     {
       host = args[0];
@@ -258,7 +293,20 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         port = DEFAULT_PORT;
     }
     
-    ClientConsole chat= new ClientConsole(host, port);
+    try
+    {
+        user = args[2];
+    }catch(ArrayIndexOutOfBoundsException e)
+    {
+        user = "ANON";
+    }
+    
+    try{
+        room = args[3];
+    }catch(ArrayIndexOutOfBoundsException e){
+        room = "common";
+    }
+    
     chat.accept();  //Wait for console data
   }
 }

@@ -190,7 +190,9 @@ public abstract class AbstractServer implements Runnable
       {
         ((ConnectionToClient)clientThreadList[i]).sendToClient(msg);
       }
-      catch (Exception ex) {}
+      catch (Exception ex) {
+          ex.printStackTrace();
+      }
     }
   }
 
@@ -445,6 +447,7 @@ public abstract class AbstractServer implements Runnable
     Object msg, ConnectionToClient client)
   {
     this.handleMessageFromClient(msg, client);
+    
   }
 }
 // End of AbstractServer Class
