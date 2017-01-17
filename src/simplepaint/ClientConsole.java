@@ -307,6 +307,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         room = "common";
     }
     
+    ClientConsole chat= new ClientConsole(host, port, user, room);
     chat.accept();  //Wait for console data
   }
 }
