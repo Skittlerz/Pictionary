@@ -43,62 +43,87 @@ public class EchoServer extends AbstractServer
   //This is where we can differentiate between different client requests
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
-  { 
-      if(msg.toString().startsWith("#"))
-      {
-          handleServerCommand(msg,client);
-      }else
-      {
-          System.out.println("Message received: " + msg + " from " + client);
-          String room = client.getInfo("room").toString();
-          System.out.println("Hi " + room);
-          //this.sendToAllClients(msg);
-          //Must use the Client Console constructor that initializes room
-          //otherwise this method will not work here b/c room will not be set
-          this.sendToRoom(msg, client);
-      }
+  {     
+    if(msg instanceof Message)
+    {
+        Message m = (Message)msg;
+        
+        if(m.getMessage().startsWith("#"))
+        {
+            handleServerCommand(msg,client);
+        }else
+        {
+            System.out.println("Message received: " + msg + " from " + client);
+   
+            //Must use the Client Console constructor that initializes room
+            //otherwise this method will not work here b/c room will not be set
+            this.sendToRoom(msg, client);
+        }
+    }
   }
     
   public void handleServerCommand(Object msg, ConnectionToClient client){
-      String message = msg.toString();
       
-      if(message.startsWith("#login")){
-          String userName = message.split(" ")[1];
-          client.setInfo("userName", userName);
-          this.sendToAllClients(userName + " has arrived!");
-      }else if(message.startsWith("#w")){
-          String target = message.split(" ")[1];
-          sendToAClient(msg,target);
-      }else if(message.startsWith("#yell")){
-          message = message.split(" ")[1];
-          this.sendToAllClients(message);
-      }else if(message.startsWith("#join")){
-          String room = message.split(" ")[1];
-          client.setInfo("room", room);
-      }
+        if(msg instanceof Message)
+        {
+          
+            String message = ((Message)msg).getMessage();
+      
+            if(message.startsWith("#login"))
+            {
+                String userName = message.split(" ")[1];
+                client.setInfo("userName", userName);
+                this.sendToAllClients(userName + " has arrived!");
+            }else if(message.startsWith("#w"))
+            {
+                String target = message.split(" ")[1];
+                sendToAClient(msg,target);
+            }else if(message.startsWith("#yell"))
+            {
+                message = message.split(" ")[1];
+                this.sendToAllClients(message);
+            }else if(message.startsWith("#join"))
+            {
+                String room = message.split(" ")[1];
+                client.setInfo("room", room);
+            }else
+            {
+                try
+                {
+                    client.sendToClient("Unknown Command");
+                }catch(Exception ex)
+                {
+                    System.out.println("Failed to send unknown command message.");
+                }
+            }
+        }
   }
   //Method used for private messages
   public void sendToAClient(Object msg, String target)
   { 
-    String message = msg.toString();
-    String privateMessage = message.substring(message.indexOf(" ", message.indexOf(" ") + 1), message.length());
-    //privateMessage = privateMessage.substring(privateMessage.indexOf(" "), privateMessage.length());
-    //basic structure to communicate with any or all clients
-    //similar implementations should go in EchoServer  
-    Thread[] clientThreadList = getClientConnections();
-
-    for (int i=0; i<clientThreadList.length; i++)
+    if(msg instanceof Message)
     {
-        ConnectionToClient clientProxy = (ConnectionToClient)clientThreadList[i];
-        
-        if(clientProxy.getInfo("userName").equals(target))
+    
+        String message = ((Message)msg).getMessage();
+        String privateMessage = message.substring(message.indexOf(" ", message.indexOf(" ") + 1), message.length());
+        ((Message)msg).setMessage(privateMessage);
+        //basic structure to communicate with any or all clients
+        //similar implementations should go in EchoServer  
+        Thread[] clientThreadList = getClientConnections();
+
+        for (int i=0; i<clientThreadList.length; i++)
         {
-            try
+            ConnectionToClient clientProxy = (ConnectionToClient)clientThreadList[i];
+
+            if(clientProxy.getInfo("userName").equals(target))
             {
-                clientProxy.sendToClient(privateMessage);
-            }catch(Exception ex)
-            {
-                System.out.println("failed to send private message");
+                try
+                {
+                    clientProxy.sendToClient(msg);
+                }catch(Exception ex)
+                {
+                    System.out.println("failed to send private message");
+                }
             }
         }
     }
@@ -110,14 +135,17 @@ public class EchoServer extends AbstractServer
     //similar implementations should go in EchoServer  
     Thread[] clientThreadList = getClientConnections();
     String room = client.getInfo("room").toString();
+    if(msg instanceof String){
+    String user = client.getInfo("userName").toString();
+    msg = user + ": " + msg;
+  }
     //System.out.println(room);
     //String message = msg.toString();
     
     for (int i=0; i<clientThreadList.length; i++)
     {
         ConnectionToClient clientProxy = (ConnectionToClient)clientThreadList[i];
-        //boolean yes = clientProxy.getInfo("room").equals(room);
-        //System.out.println(yes);
+       
         if(clientProxy.getInfo("room").equals(room)){
             try
             {

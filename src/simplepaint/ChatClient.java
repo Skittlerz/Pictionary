@@ -74,36 +74,19 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) 
   {
-    if(msg instanceof ImageIcon){
-        ImageIcon image = (ImageIcon) msg;
-        clientUI.display(image);
-    }else{
-        //Testing
-        System.out.println("ChatClient HandleMessageFromServer "+ clientUI);
-        clientUI.display(msg.toString());
+    if(msg instanceof Message){
+        
+        if(((Message)msg).isImage())
+        {
+            clientUI.display(((Message)msg).getImage());
+        }else
+        {
+            clientUI.display(((Message)msg));
+        }
+        
     }
   }
 
-  /**
-   * This method handles all data coming from the UI            
-   *
-   * @param message The message from the UI.    
-   */
-  public void handleImageFromClientUI(BufferedImage bi)
-  {
-      try
-      {
-        buffImage = new ImageIcon(bi);
-        sendToServer(buffImage);
-      }
-      catch(IOException e)
-      {
-        clientUI.display("Could not send message to server. Terminating client.");
-        System.out.println(e);
-        quit();
-      }
-      
-  }
   
    /**
    * Hook method called each time an exception is thrown by the
@@ -129,16 +112,27 @@ public class ChatClient extends AbstractClient
       System.out.println("Connected to: " + super.getHost());
   }
   
-  public void handleMessageFromClientUI(String message)
+  public void handleMessageFromClientUI(Object msg)
   {
     try
     {
-      //differentiate between local and server commands
-      if(message.charAt(0) == '#'){
-          handleCommandFromClientUI(message);
-      }else{
-        sendToServer(message);
-      }
+        if(msg instanceof Message)
+        {
+            if(((Message)msg).isImage())
+            {
+               sendToServer(msg);
+            }else
+            {
+              //differentiate between local and server commands
+              if(((Message)msg).getMessage().charAt(0) == '#')
+              {
+                handleCommandFromClientUI(msg);
+              }else
+              {
+                sendToServer(msg);
+              }
+            }
+        }
     }
     catch(IOException e)
     {
@@ -146,60 +140,66 @@ public class ChatClient extends AbstractClient
         ("Could not send message to server. Terminating client.");
       quit();
     }
+    
   }
   /**
    * Method called to handle commands. 
    * Commands must begin with #
    * @param command the command sent by user.
    */
-  public void handleCommandFromClientUI(String command){
+  public void handleCommandFromClientUI(Object command){
      
-    try{      
-        if(command.startsWith("#getPort"))
+    try{
+        if(command instanceof Message)
         {
-            clientUI.display(String.valueOf(getPort()));
-        }else if(command.startsWith("#quit"))
-        {
-            quit();
-        }else if(command.startsWith("#logOff"))
-        {
-            closeConnection();
-        }else if(command.startsWith("#logOn"))
-        {
-            openConnection();
-        }else if(command.startsWith("#setHost"))
-        {
-            if(!isConnected()){
-                String[] commands = command.split(" ");
-                setHost(commands[1]);
-            }else{
-                clientUI.display("Error: Must logoff to change host.");
-            }
-        }else if(command.startsWith("#getHost"))
-        {
-            clientUI.display(getHost());
-        }else if(command.startsWith("#setPort"))
-        {
-            if(!isConnected()){
-                String[] commands = command.split(" ");
-                int port = Integer.parseInt(commands[1]);
-                setPort(port); 
-            }else{
-                clientUI.display("Error: Must logoff to change port.");
-            }
-        }else if(command.startsWith("#login"))
-        {
-            try{
-                sendToServer(command);
-            }catch(IOException e){
-                clientUI.display("Could not send command to server. Terminating client.");
-                e.printStackTrace();
+            if(((Message)command).getMessage().startsWith("#getPort"))
+            {
+                clientUI.display(String.valueOf(getPort()));
+            }else if(((Message)command).getMessage().startsWith("#quit"))
+            {
                 quit();
+            }else if(((Message)command).getMessage().startsWith("#logOff"))
+            {
+                closeConnection();
+            }else if(((Message)command).getMessage().startsWith("#logOn"))
+            {
+                openConnection();
+            }else if(((Message)command).getMessage().startsWith("#setHost"))
+            {
+                if(!isConnected())
+                {
+                    String[] commands = ((Message)command).getMessage().split(" ");
+                    setHost(commands[1]);
+                }else
+                {
+                    clientUI.display("Error: Must logoff to change host.");
+                }
+            }else if(((Message)command).getMessage().startsWith("#getHost"))
+            {
+                clientUI.display(getHost());
+            }else if(((Message)command).getMessage().startsWith("#setPort"))
+            {
+                if(!isConnected()){
+                    String[] commands = ((Message)command).getMessage().split(" ");
+                    int port = Integer.parseInt(commands[1]);
+                    setPort(port); 
+                }else{
+                    clientUI.display("Error: Must logoff to change port.");
+                }
+            }else if(((Message)command).getMessage().startsWith("#login"))
+            {
+                try{
+                    sendToServer(command);
+                }catch(IOException e){
+                    clientUI.display("Could not send command to server. Terminating client.");
+                    e.printStackTrace();
+                    quit();
+                }
             }
-        }
-        else
-        {
-            sendToServer(command);
+            else
+            {
+                sendToServer(command);
+            }
         }
     }catch(IOException e){
         clientUI.display

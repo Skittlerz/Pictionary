@@ -47,8 +47,16 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   JButton load, red, green, blue, black, clear, send;
   JTextArea displayText;
   JTextField input;
+  //TODO
+  //try System.newline
   private final static String newline = "\n";
-
+  //Used for setting text color of username
+  //the text color should be different for each user
+  //thus we use static values. Instance will be used to
+  //call a position in the TAG array
+  static Color[] TAG = {Color.BLUE, Color.RED, Color.GREEN};
+  static int INSTANCE = 0;
+  
   
   //Constructors ****************************************************
 
@@ -64,6 +72,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     {   
         init();
         client= new ChatClient(host,port,this);
+        INSTANCE++;
     } 
     catch(IOException exception) 
     {
@@ -79,6 +88,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     {   
         init();
         client= new ChatClient(host,port,user,this);   
+        INSTANCE++;
     } 
     catch(IOException exception) 
     {
@@ -87,13 +97,16 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       System.exit(1);
     }
   }
-  
+  //This should be the constructor that is used
+  //otherwise there will be errors with sendToRoom()
+  //which is the default way to send a message
   public ClientConsole(String host, int port, String user, String room) 
   {
     try 
     {   
         init();
-        client= new ChatClient(host,port,user,room,this);    
+        client= new ChatClient(host,port,user,room,this); 
+        INSTANCE++;
     } 
     catch(IOException exception) 
     {
@@ -106,6 +119,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
    * Initialize GUI 
    */
   public void init(){
+      
       setSize(800, 600);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -179,8 +193,11 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         if(ae.getSource() == load)
         {
             BufferedImage bi = dp.getScreenShot();
+            ImageIcon ii = new ImageIcon(bi);
+            Message msg = new Message();
+            msg.setImage(ii);
             System.out.println(bi);
-            client.handleImageFromClientUI(bi);
+            client.handleMessageFromClientUI(msg);
         }
         else if(ae.getSource() == black)
         {
@@ -204,8 +221,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         }
         else if(ae.getSource() == send || ae.getSource() == input)
         {
-            //displayInput(input.getText());
-            client.handleMessageFromClientUI(input.getText());
+            Message msg = new Message();
+            msg.setMessage(input.getText());
+            client.handleMessageFromClientUI(msg);
             input.setText("");
         }
        
@@ -229,7 +247,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       while (true) 
       {
         message = fromConsole.readLine();
-        client.handleMessageFromClientUI(message);
+        Message msg = new Message();
+        msg.setMessage(message);
+        client.handleMessageFromClientUI(msg);
       }
     } 
     catch (Exception ex) 
@@ -250,9 +270,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     System.out.println(">>>>> " + message);
     //displays in console text area 
     System.out.println(displayText);
-    
-    
-    displayText.append(message+newline);
+    displayText.append(message);
   }
   
   public void display(ImageIcon ii){
@@ -261,6 +279,10 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   
   public void displayInput(String message){
       displayText.append(">" + message+newline);
+  }
+  
+  public void display(Message m){
+      displayText.append(m.getMessage()+newline);
   }
   
   //Class methods ***************************************************

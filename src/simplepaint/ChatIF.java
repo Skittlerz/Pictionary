@@ -14,4 +14,6 @@ public interface ChatIF
   public abstract void display(String message);
   
   public abstract void display(ImageIcon image);
+  
+  public abstract void display(Message m);
 }
