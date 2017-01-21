@@ -12,15 +12,19 @@ import javax.swing.ImageIcon;
  *
  * @author braun1792
  */
-public class Message {
+public class Message implements java.io.Serializable{
     
-    String message = null;
-    ImageIcon image = null;
-    Color tag = null;
-    String userName = null;
+    String message;
+    Color tag;
+    String userName;
+    private static final long serialVersionUID = 19870907;
     
     
    Message(){}
+   
+   Message(String  msg){
+       this.message = msg;
+   }
    
    public void setMessage(String msg){
        this.message = msg;
@@ -29,19 +33,7 @@ public class Message {
    public String getMessage(){
        return this.message;
    }
-   
-   public void setImage(ImageIcon ii){
-       this.image = ii;
-   }
-   
-   public boolean isImage(){
-       return (image != null);
-   }
-   
-   public ImageIcon getImage(){
-       return this.image;
-   }
-   
+  
    public void setTag(Color c){
        this.tag = c;
    }
@@ -53,4 +45,9 @@ public class Message {
    public void setUserName(String name){
        this.userName = name;
    }
+   
+   public String getUserName(){
+       return this.userName;
+   }
+   
 }

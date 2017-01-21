@@ -136,8 +136,9 @@ public abstract class AbstractClient implements Runnable
   {
     if (clientSocket == null || output == null)
       throw new SocketException("socket does not exist");
-
+    System.out.println("Send to server started");
     output.writeObject(msg);
+    System.out.println("Send to server finished");
   }
 
   /**
@@ -234,22 +235,24 @@ public abstract class AbstractClient implements Runnable
 
     // The message from the server
     Object msg;
-
+    
     // Loop waiting for data
 
     try
     {
+      
       while(!readyToStop)
       {
         // Get data from Server and send it to the handler
         // The thread waits indefinitely at the following
         // statement until something is received from the server
         msg = input.readObject();
-
+    
         // Concrete subclasses do what they want with the
         // msg by implementing the following method
         handleMessageFromServer(msg);
         
+        System.out.println("After handle message from server");    
       }
     }
     catch (Exception exception)
@@ -262,7 +265,8 @@ public abstract class AbstractClient implements Runnable
         }
         catch (Exception ex) { }
         
-        System.out.println(exception);
+        System.out.println("Abstract Client run method: "+exception);
+        exception.printStackTrace();
 
         connectionException(exception);
       }

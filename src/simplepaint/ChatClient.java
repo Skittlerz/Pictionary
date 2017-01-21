@@ -51,7 +51,8 @@ public class ChatClient extends AbstractClient
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
     openConnection();
-    sendToServer("#login " + userName);
+    Message user = new Message("#login " + userName);
+    sendToServer(user);
   }
    
   public ChatClient(String host, int port, String userName, String room, ChatIF clientUI) 
@@ -60,8 +61,10 @@ public class ChatClient extends AbstractClient
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
     openConnection();
-    sendToServer("#join " + room);
-    sendToServer("#login " + userName);
+    Message join = new Message("#join " + room);
+    sendToServer(join);
+    Message user = new Message("#login " + userName);
+    sendToServer(user);
   }
 
   
@@ -74,16 +77,11 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) 
   {
-    if(msg instanceof Message){
-        
-        if(((Message)msg).isImage())
-        {
-            clientUI.display(((Message)msg).getImage());
-        }else
-        {
-            clientUI.display(((Message)msg));
-        }
-        
+    if(msg instanceof Message)
+    {    
+       clientUI.display(((Message)msg));
+    }else if(msg instanceof ImageIcon){
+       clientUI.display(((ImageIcon)msg));
     }
   }
 
@@ -118,26 +116,20 @@ public class ChatClient extends AbstractClient
     {
         if(msg instanceof Message)
         {
-            if(((Message)msg).isImage())
+            //differentiate between local and server commands
+            if(((Message)msg).getMessage().charAt(0) == '#')
             {
-               sendToServer(msg);
+                handleCommandFromClientUI(msg);
             }else
             {
-              //differentiate between local and server commands
-              if(((Message)msg).getMessage().charAt(0) == '#')
-              {
-                handleCommandFromClientUI(msg);
-              }else
-              {
                 sendToServer(msg);
-              }
             }
+            
         }
     }
     catch(IOException e)
     {
-      clientUI.display
-        ("Could not send message to server. Terminating client.");
+      clientUI.display("Could not send message to server. Terminating client.");
       quit();
     }
     
@@ -202,9 +194,19 @@ public class ChatClient extends AbstractClient
             }
         }
     }catch(IOException e){
-        clientUI.display
-        ("Could not send message to server. Terminating client.");
+        clientUI.display("Could not send message to server. Terminating client.");
     }
+      
+  }
+  
+  public void handleImageFromClientUI(BufferedImage bi){
+      buffImage = new ImageIcon(bi);
+      try{
+         
+        sendToServer(buffImage);
+      }catch(IOException ioe){
+          System.out.println(ioe);
+      }
       
   }
   

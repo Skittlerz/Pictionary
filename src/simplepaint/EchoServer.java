@@ -2,7 +2,9 @@ package simplepaint;
 
 
 
+import java.awt.Color;
 import java.io.*;
+import javax.swing.ImageIcon;
 
 
 /**
@@ -46,6 +48,7 @@ public class EchoServer extends AbstractServer
   {     
     if(msg instanceof Message)
     {
+       
         Message m = (Message)msg;
         
         if(m.getMessage().startsWith("#"))
@@ -53,12 +56,13 @@ public class EchoServer extends AbstractServer
             handleServerCommand(msg,client);
         }else
         {
-            System.out.println("Message received: " + msg + " from " + client);
-   
             //Must use the Client Console constructor that initializes room
             //otherwise this method will not work here b/c room will not be set
+            ((Message)msg).setUserName(client.getInfo("userName").toString());
             this.sendToRoom(msg, client);
         }
+    }else if (msg instanceof ImageIcon){
+        this.sendToRoom(msg, client);
     }
   }
     
@@ -73,15 +77,20 @@ public class EchoServer extends AbstractServer
             {
                 String userName = message.split(" ")[1];
                 client.setInfo("userName", userName);
-                this.sendToAllClients(userName + " has arrived!");
+                Message m = new Message();
+                m.setTag(Color.BLACK);
+                m.setUserName("Server");
+                m.setMessage(userName + " has arrived!");
+                this.sendToAllClients(m);
             }else if(message.startsWith("#w"))
             {
                 String target = message.split(" ")[1];
                 sendToAClient(msg,target);
             }else if(message.startsWith("#yell"))
             {
-                message = message.split(" ")[1];
-                this.sendToAllClients(message);
+                message = message.substring(message.indexOf(" "));
+                ((Message) msg).setMessage(message);
+                this.sendToAllClients(msg);
             }else if(message.startsWith("#join"))
             {
                 String room = message.split(" ")[1];
@@ -135,10 +144,11 @@ public class EchoServer extends AbstractServer
     //similar implementations should go in EchoServer  
     Thread[] clientThreadList = getClientConnections();
     String room = client.getInfo("room").toString();
+    
     if(msg instanceof String){
-    String user = client.getInfo("userName").toString();
-    msg = user + ": " + msg;
-  }
+        String user = client.getInfo("userName").toString();
+        msg = user + ": " + msg;
+    }
     //System.out.println(room);
     //String message = msg.toString();
     

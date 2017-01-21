@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Random;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,7 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 
 /**
@@ -45,7 +50,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   //elements used for drawing window
   DrawingPanel dp;
   JButton load, red, green, blue, black, clear, send;
-  JTextArea displayText;
+  JTextPane displayText;
+  StyledDocument doc;
+  SimpleAttributeSet keyWord;
   JTextField input;
   //TODO
   //try System.newline
@@ -54,8 +61,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   //the text color should be different for each user
   //thus we use static values. Instance will be used to
   //call a position in the TAG array
-  static Color[] TAG = {Color.BLUE, Color.RED, Color.GREEN};
-  static int INSTANCE = 0;
+  static Color[] TAG = {Color.darkGray, Color.BLUE, Color.GREEN, Color.MAGENTA, 
+  Color.ORANGE, Color.CYAN, Color.PINK};
+  int num;
   
   
   //Constructors ****************************************************
@@ -72,7 +80,6 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     {   
         init();
         client= new ChatClient(host,port,this);
-        INSTANCE++;
     } 
     catch(IOException exception) 
     {
@@ -88,7 +95,6 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     {   
         init();
         client= new ChatClient(host,port,user,this);   
-        INSTANCE++;
     } 
     catch(IOException exception) 
     {
@@ -105,13 +111,15 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     try 
     {   
         init();
+        Random r = new Random();
+        num = r.nextInt(TAG.length+1);
         client= new ChatClient(host,port,user,room,this); 
-        INSTANCE++;
     } 
     catch(IOException exception) 
     {
       System.out.println("Error: Can't setup connection!"
                 + " Terminating client.");
+      System.out.println(exception);
       System.exit(1);
     }
   }
@@ -120,7 +128,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
    */
   public void init(){
       
-      setSize(800, 600);
+      setSize(1000, 700);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
       //Set color, clear and send image buttons
@@ -160,7 +168,11 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       JPanel controls = new JPanel();
       controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
       //add text display
-      displayText = new JTextArea(30,30);
+      displayText = new JTextPane();
+      //DImensions(width, height)
+      displayText.setPreferredSize(new java.awt.Dimension(300,540));
+      doc = displayText.getStyledDocument();
+      keyWord = new SimpleAttributeSet();
       displayText.setEditable(false); // set textArea non-editable
       JScrollPane scroll = new JScrollPane(displayText);
       scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -193,11 +205,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         if(ae.getSource() == load)
         {
             BufferedImage bi = dp.getScreenShot();
-            ImageIcon ii = new ImageIcon(bi);
-            Message msg = new Message();
-            msg.setImage(ii);
-            System.out.println(bi);
-            client.handleMessageFromClientUI(msg);
+            client.handleImageFromClientUI(bi);
         }
         else if(ae.getSource() == black)
         {
@@ -221,16 +229,23 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         }
         else if(ae.getSource() == send || ae.getSource() == input)
         {
-            Message msg = new Message();
-            msg.setMessage(input.getText());
-            client.handleMessageFromClientUI(msg);
-            input.setText("");
+            if(!validateTextBox())
+            {   
+                Message msg = new Message();
+                msg.setMessage(input.getText());
+                msg.setTag(TAG[num]);
+                client.handleMessageFromClientUI(msg);
+                input.setText("");
+            }
         }
        
     }
   
   //Instance methods ************************************************
   
+    public boolean validateTextBox(){
+        return (input.getText().equals(""));
+    }
   /**
    * This method waits for input from the console.  Once it is 
    * received, it sends it to the client's message handler.
@@ -270,7 +285,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     System.out.println(">>>>> " + message);
     //displays in console text area 
     System.out.println(displayText);
-    displayText.append(message);
+    //displayText.append(message);
   }
   
   public void display(ImageIcon ii){
@@ -278,11 +293,23 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   }
   
   public void displayInput(String message){
-      displayText.append(">" + message+newline);
+      try{
+        doc.insertString(doc.getLength(),">" + message+newline, keyWord );
+      }catch(Exception e){
+          System.out.println(e);
+      }
+      
   }
   
   public void display(Message m){
-      displayText.append(m.getMessage()+newline);
+      try{
+        StyleConstants.setForeground(keyWord, m.getTag());
+        doc.insertString(doc.getLength(),m.getUserName()+": ", keyWord );
+        StyleConstants.setForeground(keyWord, Color.BLACK);
+        doc.insertString(doc.getLength(),m.getMessage()+newline, keyWord );
+      }catch(Exception e){
+          System.out.println(e);
+      }
   }
   
   //Class methods ***************************************************
