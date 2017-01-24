@@ -61,7 +61,8 @@ public class EchoServer extends AbstractServer
             ((Message)msg).setUserName(client.getInfo("userName").toString());
             this.sendToRoom(msg, client);
         }
-    }else if (msg instanceof ImageIcon){
+    }else if (msg instanceof ImageIcon)
+    {
         this.sendToRoom(msg, client);
     }
   }
@@ -82,20 +83,35 @@ public class EchoServer extends AbstractServer
                 m.setUserName("Server");
                 m.setMessage(userName + " has arrived!");
                 this.sendToAllClients(m);
+                
             }else if(message.startsWith("#w"))
             {
+                ((Message)msg).setUserName(client.getInfo("userName").toString());
                 String target = message.split(" ")[1];
                 sendToAClient(msg,target);
+                
             }else if(message.startsWith("#yell"))
             {
+                ((Message)msg).setUserName(client.getInfo("userName").toString());
                 message = message.substring(message.indexOf(" "));
                 ((Message) msg).setMessage(message);
                 this.sendToAllClients(msg);
+                
             }else if(message.startsWith("#join"))
             {
                 String room = message.split(" ")[1];
                 client.setInfo("room", room);
-            }else
+                
+            }else if(message.startsWith("#intercom"))
+            {
+                ((Message)msg).setUserName(client.getInfo("userName").toString());
+                String room = message.substring(message.indexOf(" ")+1,message.indexOf(" ",
+                        message.indexOf(" ")+1));
+                message = message.substring(message.indexOf(room)+room.length());
+                ((Message)msg).setMessage(message);
+                sendToRoom(msg, room);
+            }
+            else
             {
                 try
                 {
@@ -144,14 +160,30 @@ public class EchoServer extends AbstractServer
     //similar implementations should go in EchoServer  
     Thread[] clientThreadList = getClientConnections();
     String room = client.getInfo("room").toString();
-    
-    if(msg instanceof String){
-        String user = client.getInfo("userName").toString();
-        msg = user + ": " + msg;
+ 
+    for (int i=0; i<clientThreadList.length; i++)
+    {
+        ConnectionToClient clientProxy = (ConnectionToClient)clientThreadList[i];
+       
+        if(clientProxy.getInfo("room").equals(room)){
+            try
+            {
+                clientProxy.sendToClient(msg);
+            }catch(Exception ex)
+            {
+                System.out.println("failed to send message to room");
+            }
+        }
     }
-    //System.out.println(room);
-    //String message = msg.toString();
-    
+  }
+  //Overloaded method
+  //Used to communicate with all clients in the same room
+  //Takes string room = room to send message to  
+   public void sendToRoom(Object msg, String room)
+  {  
+    Thread[] clientThreadList = getClientConnections();
+    System.out.println("sendToRoom(msg,room) has been called.");
+    System.out.println("room =" + room);
     for (int i=0; i<clientThreadList.length; i++)
     {
         ConnectionToClient clientProxy = (ConnectionToClient)clientThreadList[i];

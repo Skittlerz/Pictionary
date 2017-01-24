@@ -110,9 +110,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   {
     try 
     {   
-        init();
         Random r = new Random();
-        num = r.nextInt(TAG.length+1);
+        num = r.nextInt(TAG.length-1);
+        init();
         client= new ChatClient(host,port,user,room,this); 
     } 
     catch(IOException exception) 
