@@ -4,6 +4,8 @@ package simplepaint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +23,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -110,9 +114,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   {
     try 
     {   
-        init();
         Random r = new Random();
-        num = r.nextInt(TAG.length+1);
+        num = r.nextInt(TAG.length-1);
+        init();
         client= new ChatClient(host,port,user,room,this); 
     } 
     catch(IOException exception) 
@@ -126,7 +130,21 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   /**
    * Initialize GUI 
    */
-  public void init(){
+  public void init()
+  {
+      
+//      try 
+//      {
+//          for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) 
+//          {
+//              if ("Nimbus".equals(info.getName())) {
+//                    UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//       } catch (Exception e) {
+//            // If Nimbus is not available, you can set the GUI to another look and feel.
+//       }
       
       setSize(1000, 700);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -164,9 +182,9 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       top.add(clear);
       top.add(load);
       
-      JPanel right = new JPanel();
       JPanel controls = new JPanel();
       controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+      
       //add text display
       displayText = new JTextPane();
       //DImensions(width, height)
@@ -283,9 +301,13 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   public void display(String message) 
   {
     System.out.println(">>>>> " + message);
-    //displays in console text area 
     System.out.println(displayText);
-    //displayText.append(message);
+    //displays in console text area 
+    try{
+    doc.insertString(doc.getLength(),message+newline, keyWord );
+    }catch(Exception e){
+        System.out.println(e);
+    }
   }
   
   public void display(ImageIcon ii){
