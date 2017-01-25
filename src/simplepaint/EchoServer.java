@@ -182,8 +182,7 @@ public class EchoServer extends AbstractServer
    public void sendToRoom(Object msg, String room)
   {  
     Thread[] clientThreadList = getClientConnections();
-    System.out.println("sendToRoom(msg,room) has been called.");
-    System.out.println("room =" + room);
+   
     for (int i=0; i<clientThreadList.length; i++)
     {
         ConnectionToClient clientProxy = (ConnectionToClient)clientThreadList[i];

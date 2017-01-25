@@ -146,7 +146,7 @@ public class ChatClient extends AbstractClient
         {
             if(((Message)command).getMessage().startsWith("#getPort"))
             {
-                clientUI.display(String.valueOf(getPort()));
+                clientUI.display("port = "+String.valueOf(getPort()));
             }else if(((Message)command).getMessage().startsWith("#quit"))
             {
                 quit();
@@ -168,7 +168,7 @@ public class ChatClient extends AbstractClient
                 }
             }else if(((Message)command).getMessage().startsWith("#getHost"))
             {
-                clientUI.display(getHost());
+                clientUI.display("host = "+getHost());
             }else if(((Message)command).getMessage().startsWith("#setPort"))
             {
                 if(!isConnected()){
@@ -187,8 +187,17 @@ public class ChatClient extends AbstractClient
                     e.printStackTrace();
                     quit();
                 }
-            }
-            else
+            }else if(((Message)command).getMessage().startsWith("#help"))
+            {
+                String help = "\nCommands:\n#logOn - open connection\n"+
+                        "#logOff - close connection\n#setPort [number] - set port number (must be logged off)\n"+
+                        "#getPort - return port number\n#setHost [hostname] - set host to hostname (must be logged off)\n"+
+                        "#getHost - return hostname\n#login [name] - login as name\n#join [room] - join that room\n"
+                        +"#yell [message]- send message to all users\n#w [user] [message] - send private message to user\n"+
+                        "#intercom [room] [message] - send message to specified room\n";
+                
+                clientUI.display(help);
+            }else
             {
                 sendToServer(command);
             }
