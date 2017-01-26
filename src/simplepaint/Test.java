@@ -6,26 +6,101 @@
 package simplepaint;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
-/**
- *
- * @author braun1792
- */
-public class Test {
-    
-    static Color[] TAG = {Color.darkGray, Color.BLUE, Color.GREEN, Color.MAGENTA, 
-  Color.ORANGE, Color.CYAN, Color.PINK};
-    
-    
-    public static void main(String[] args){
-        String message = "#intercom default  this is a test";
+
+public class Test extends JFrame {
+    Timer tm1,tm2;
+    JButton up,down;
+    JPanel panel;
+    public Test(){
+        super("Timer");
+        up = new JButton("up");
+        down = new JButton("down");
+        up.setBounds(150, 400, 100, 20);
+        down.setBounds(260, 400, 100, 20);
+        panel = new JPanel();
+        panel.setBackground(Color.decode("#3a5795"));
+        panel.setBounds(0, 0, 500, 0);
         
-        String room = message.substring(message.indexOf(" "),message.indexOf(" ",message.indexOf(" ")+1));
-        message = message.substring(message.indexOf(room)+room.length());
+        tm1 = new Timer(50,new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            
+                if(panel.getHeight() != 350){
+                    up.setEnabled(false);
+                    down.setEnabled(false);
+                    panel.setBounds(0, 0, 500, panel.getHeight()+5);
+                    if(panel.getHeight() == 350){
+                        tm1.stop();
+                    up.setEnabled(true);
+                    down.setEnabled(true); 
+                    }
+                }
+            }
+        });
         
-        System.out.println(room);
-        System.out.println(message);
-        System.out.println(TAG.length);
+        tm2 = new Timer(50, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                if(panel.getHeight() !=0){
+                         up.setEnabled(false);
+                    down.setEnabled(false);
+                        
+                    panel.setBounds(0, 0, 500, panel.getHeight()-5);
+                    if(panel.getHeight() == 0){
+                        tm2.stop();
+                       up.setEnabled(true);
+                    down.setEnabled(true);
+                    }
+                }
+            }
+        });
+        
+
+        //Timer2 Start
+        up.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tm2.start();
+            }
+        });
+        
+
+         //Timer1 Start
+        down.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tm1.start();
+            }
+        });
+        
+        
+        
+        add(up);
+        add(down);
+        add(panel);
+        setLayout(null);
+        setSize(500, 500);
+        getContentPane().setBackground(Color.decode("#bdb76b"));
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
-    
+  
+ 
+ public static void main(String[] args){
+ 
+         new Test();
+    }
 }
+

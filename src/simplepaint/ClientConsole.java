@@ -4,14 +4,18 @@ package simplepaint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Random;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -43,7 +47,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   /**
    * The default port to connect on.
    */
-  final public static int DEFAULT_PORT = 5555;
+  final public static int DEFAULT_PORT = 5556;
   
   //Instance variables **********************************************
   
@@ -133,24 +137,12 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   public void init()
   {
       
-//      try 
-//      {
-//          for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) 
-//          {
-//              if ("Nimbus".equals(info.getName())) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//       } catch (Exception e) {
-//            // If Nimbus is not available, you can set the GUI to another look and feel.
-//       }
-      
       setSize(1000, 700);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
       //Set color, clear and send image buttons
       JPanel top = new JPanel();
+      //top.setLayout(new BoxLayout(top, BoxLayout.X_AXIS));
       black = new JButton("Black");
       black.setBackground(Color.BLACK);
       black.setForeground(Color.WHITE);
@@ -168,6 +160,18 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       clear.setForeground(Color.WHITE);
       load = new JButton("Send Image");
       
+      //set the timer label
+      Label lblTimer = new Label("Timer:");
+      lblTimer.setFont(new Font("SansSerif", Font.PLAIN, 18));
+      Label lblTimerCount = new Label("1:00");
+      lblTimerCount.setFont(new Font("SansSerif", Font.PLAIN, 18));
+      
+      //set the score label
+      Label lblScore = new Label("Score:");
+      lblScore.setFont(new Font("SansSerif", Font.PLAIN, 18));
+      Label lblScoreCount = new Label("100");
+      lblScoreCount.setFont(new Font("SansSerif", Font.PLAIN, 18));
+      
       load.addActionListener(this);
       black.addActionListener(this);
       red.addActionListener(this);
@@ -175,12 +179,20 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       blue.addActionListener(this);
       clear.addActionListener(this);
         
+      top.add(lblTimer);
+      top.add(lblTimerCount);
+      top.add(Box.createRigidArea(new Dimension(35,0)));
       top.add(black);
       top.add(red);
       top.add(green);
       top.add(blue);
+     // top.add(Box.createHorizontalGlue());
       top.add(clear);
       top.add(load);
+      top.add(Box.createRigidArea(new Dimension(130,0)));
+      top.add(lblScore);
+      top.add(lblScoreCount);
+    
       
       JPanel controls = new JPanel();
       controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
@@ -214,7 +226,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       add(controls, BorderLayout.EAST);
       add(dp, BorderLayout.CENTER);
       setVisible(true);
-      setTitle("Pictionary - Janky Student Edition");
+      setTitle("Pictionary - JSE");
   }
 
   @Override

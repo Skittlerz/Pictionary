@@ -7,10 +7,14 @@ package simplepaint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,11 +50,11 @@ public class Menu extends JFrame implements ActionListener{
         if(ae.getSource() == singlePlayer)
         {
            
-           launchMultiplayer("localhost", 5555, "Amanda", "common");
+           launchMultiplayer("localhost", 5556, "Amanda", "common");
         }
         else if(ae.getSource() == multiplayer)
         {
-           launchMultiplayer("localhost", 5555, "Amanda", "common");
+           launchMultiplayer("localhost", 5556, "Amanda", "common");
         }
        
     }
@@ -71,19 +75,32 @@ public class Menu extends JFrame implements ActionListener{
             // If Nimbus is not available, you can set the GUI to another look and feel.
        }
       
-      setSize(500, 500);
+      setSize(850, 750);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      
+      //set the title screen image
+      JPanel center = new JPanel();
+      center.setSize(800,600);
+      URL imageUrl = this.getClass().getResource("/Images/TitleScreen.png");
+      ImageIcon icon = new ImageIcon(imageUrl);
+      JLabel label = new JLabel();
+      label.setIcon(icon);
+      center.add(label);
         
-      //Set color, clear and send image buttons
+      //Set the single player and multiplayer buttons
       JPanel south = new JPanel();
       
       singlePlayer = new JButton("Single Player Mode");
-      singlePlayer.setBackground(Color.WHITE);
-      singlePlayer.setForeground(Color.BLACK);
+      singlePlayer.setPreferredSize(new Dimension(170,80));
+      singlePlayer.setFont(new Font("SansSerif", Font.BOLD, 14));
+      singlePlayer.setBackground(Color.DARK_GRAY);
+      singlePlayer.setForeground(Color.WHITE);
       
       multiplayer = new JButton("Multiplayer Mode");
-      multiplayer.setBackground(Color.WHITE);
-      multiplayer.setForeground(Color.BLACK);
+      multiplayer.setPreferredSize(new Dimension(170,80));
+      multiplayer.setFont(new Font("SansSerif", Font.BOLD, 14));
+      multiplayer.setBackground(Color.DARK_GRAY);
+      multiplayer.setForeground(Color.WHITE);
       
       singlePlayer.addActionListener(this);
       multiplayer.addActionListener(this);
@@ -91,11 +108,11 @@ public class Menu extends JFrame implements ActionListener{
       south.add(singlePlayer);
       south.add(multiplayer);
       
-      
+      add(center, BorderLayout.CENTER);
       add(south, BorderLayout.SOUTH);
      
       setVisible(true);
-      setTitle("Pictionary - Janky Student Edition");
+      setTitle("Pictionary - JSE");
     }
     
     public void launchMultiplayer(String h, int p, String u, String r){
