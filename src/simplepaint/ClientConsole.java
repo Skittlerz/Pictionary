@@ -27,6 +27,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.text.SimpleAttributeSet;
@@ -62,9 +63,10 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   StyledDocument doc;
   SimpleAttributeSet keyWord;
   JTextField input;
-  //TODO
-  //try System.newline
+  Label lblTimerCount, lblScoreCount;
+  
   private final static String newline = "\n";
+  
   //Used for setting text color of username
   //the text color should be different for each user
   //thus we use static values. Instance will be used to
@@ -163,13 +165,13 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       //set the timer label
       Label lblTimer = new Label("Timer:");
       lblTimer.setFont(new Font("SansSerif", Font.PLAIN, 18));
-      Label lblTimerCount = new Label("1:00");
+      lblTimerCount = new Label("1:00");
       lblTimerCount.setFont(new Font("SansSerif", Font.PLAIN, 18));
       
       //set the score label
       Label lblScore = new Label("Score:");
       lblScore.setFont(new Font("SansSerif", Font.PLAIN, 18));
-      Label lblScoreCount = new Label("100");
+      lblScoreCount = new Label("100");
       lblScoreCount.setFont(new Font("SansSerif", Font.PLAIN, 18));
       
       load.addActionListener(this);
@@ -261,11 +263,13 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         {
             if(!validateTextBox())
             {   
+               
                 Message msg = new Message();
                 msg.setMessage(input.getText());
                 msg.setTag(TAG[num]);
                 client.handleMessageFromClientUI(msg);
                 input.setText("");
+                
             }
         }
        
@@ -275,6 +279,11 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   
     public boolean validateTextBox(){
         return (input.getText().equals(""));
+    }
+    
+    public void displayCountdown(String count){
+        
+        lblTimerCount.setText(count);
     }
   /**
    * This method waits for input from the console.  Once it is 
@@ -345,6 +354,8 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
           System.out.println(e);
       }
   }
+     
+
   
   //Class methods ***************************************************
   
