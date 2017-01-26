@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -75,7 +76,7 @@ public class Menu extends JFrame implements ActionListener{
             // If Nimbus is not available, you can set the GUI to another look and feel.
        }
       
-      setSize(850, 750);
+      setSize(850, 740);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       
       //set the title screen image
@@ -91,13 +92,13 @@ public class Menu extends JFrame implements ActionListener{
       JPanel south = new JPanel();
       
       singlePlayer = new JButton("Single Player Mode");
-      singlePlayer.setPreferredSize(new Dimension(170,80));
+      singlePlayer.setPreferredSize(new Dimension(170,70));
       singlePlayer.setFont(new Font("SansSerif", Font.BOLD, 14));
       singlePlayer.setBackground(Color.DARK_GRAY);
       singlePlayer.setForeground(Color.WHITE);
       
       multiplayer = new JButton("Multiplayer Mode");
-      multiplayer.setPreferredSize(new Dimension(170,80));
+      multiplayer.setPreferredSize(new Dimension(170,70));
       multiplayer.setFont(new Font("SansSerif", Font.BOLD, 14));
       multiplayer.setBackground(Color.DARK_GRAY);
       multiplayer.setForeground(Color.WHITE);
@@ -106,6 +107,7 @@ public class Menu extends JFrame implements ActionListener{
       multiplayer.addActionListener(this);
       
       south.add(singlePlayer);
+      south.add(Box.createRigidArea(new Dimension(35,0)));
       south.add(multiplayer);
       
       add(center, BorderLayout.CENTER);

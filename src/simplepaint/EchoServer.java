@@ -3,8 +3,11 @@ package simplepaint;
 
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import javax.swing.ImageIcon;
+import javax.swing.Timer;
 
 
 /**
@@ -12,7 +15,7 @@ import javax.swing.ImageIcon;
  * superclass in order to give more functionality to the server.
 
  */
-public class EchoServer extends AbstractServer 
+public class EchoServer extends AbstractServer
 {
   //Class variables *************************************************
   
@@ -110,8 +113,12 @@ public class EchoServer extends AbstractServer
                 message = message.substring(message.indexOf(room)+room.length());
                 ((Message)msg).setMessage(message);
                 sendToRoom(msg, room);
-            }
-            else
+                
+            }else if(message.startsWith("#start"))
+            {
+            
+                
+            }else
             {
                 try
                 {
@@ -123,6 +130,8 @@ public class EchoServer extends AbstractServer
             }
         }
   }
+  
+    
   //Method used for private messages
   public void sendToAClient(Object msg, String target)
   { 
@@ -254,5 +263,19 @@ public class EchoServer extends AbstractServer
       ex.printStackTrace();
     }
   }
+  
+  class countdownTask implements ActionListener {
+        
+        private int counter = 0;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            //label.setText(""+counter++);
+
+            if (counter == 10){}
+                //timer.removeActionListener(this);
+        }
+      
+    }
 }
 //End of EchoServer class

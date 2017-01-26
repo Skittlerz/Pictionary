@@ -32,9 +32,4 @@ public class TimeCounter {
     }
     
     
-    public static void main(String [] args){
-        
-       
-    }
-    
 }
