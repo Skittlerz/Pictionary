@@ -194,7 +194,8 @@ public class ChatClient extends AbstractClient
                         "#getPort - return port number\n#setHost [hostname] - set host to hostname (must be logged off)\n"+
                         "#getHost - return hostname\n#login [name] - login as name\n#join [room] - join that room\n"
                         +"#yell [message]- send message to all users\n#w [user] [message] - send private message to user\n"+
-                        "#intercom [room] [message] - send message to specified room\n";
+                        "#intercom [room] [message] - send message to specified room\n #locate [user] - returns which room "+
+                        "the user is in";
                 
                 clientUI.display(help);
             }else

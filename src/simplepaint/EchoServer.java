@@ -115,9 +115,12 @@ public class EchoServer extends AbstractServer
                 sendToRoom(msg, room);
                 
             }else if(message.startsWith("#start"))
-            {
-            
-                
+            {   
+            }else if(message.startsWith("#locate"))
+            {   
+                String targetUser = message.substring(message.indexOf(" ")+1);
+                System.out.println("Locate method: "+ targetUser);
+                findUser(client, targetUser);
             }else
             {
                 try
@@ -207,6 +210,52 @@ public class EchoServer extends AbstractServer
         }
     }
   }
+   
+  public void findUser(ConnectionToClient client, String target)
+  { 
+        String room = ""; 
+        Message m = new Message();
+        Boolean found = false;
+        
+        
+        m.setUserName("Server");
+        m.setTag(Color.BLACK);
+       
+            Thread[] clientThreadList = getClientConnections();
+
+            for (int i=0; i<clientThreadList.length; i++)
+            {
+                ConnectionToClient clientProxy = (ConnectionToClient)clientThreadList[i];
+
+                if(clientProxy.getInfo("userName").equals(target))
+                {
+                    try
+                    {
+                        room = clientProxy.getInfo("room").toString();
+                        found = true;
+                        break;
+                    }catch(Exception ex)
+                    {
+                        System.out.println("failed to send private message");
+                    }
+                }
+            }
+            
+            if(found){
+                m.setMessage(target + " was found in room " + room);
+            }else{
+                m.setMessage(target + " is not currently on the server");
+            }
+            
+            try{
+                client.sendToClient(m);
+            }catch(Exception e){
+                System.out.println("Failed to look for user.");
+            }
+        
+        
+  }
+
     
   /**
    * This method overrides the one in the superclass.  Called
