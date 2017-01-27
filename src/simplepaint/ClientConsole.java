@@ -202,24 +202,28 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       //add text display
       displayText = new JTextPane();
       //DImensions(width, height)
-      displayText.setPreferredSize(new java.awt.Dimension(300,540));
+      displayText.setPreferredSize(new Dimension(400,540));
       doc = displayText.getStyledDocument();
       keyWord = new SimpleAttributeSet();
       displayText.setEditable(false); // set textArea non-editable
       JScrollPane scroll = new JScrollPane(displayText);
       scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       //add input text box
-      JLabel enter = new JLabel("Send a message:");
-      input = new JTextField(10);
+      input = new JTextField(5);
       input.addActionListener(this);
       //add button to send message
       send = new JButton("Send");
       send.addActionListener(this);
+      //use seperate panel for input and send so they are side by side
+      JPanel textInput = new JPanel();
+      textInput.setLayout(new BoxLayout(textInput,BoxLayout.X_AXIS));
+      textInput.add(input);
+      textInput.add(send);
       //add components to boxlayout panel
       controls.add(scroll);
-      controls.add(enter);
-      controls.add(input);
-      controls.add(send);
+      controls.add(Box.createRigidArea(new Dimension(400,30)));
+      //controls.add(enter);
+      controls.add(textInput);
         
       dp = new DrawingPanel();
       dp.setBackground(Color.WHITE);
