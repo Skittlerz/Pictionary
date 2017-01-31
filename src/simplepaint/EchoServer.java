@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
@@ -121,6 +122,23 @@ public class EchoServer extends AbstractServer
                 String targetUser = message.substring(message.indexOf(" ")+1);
                 System.out.println("Locate method: "+ targetUser);
                 findUser(client, targetUser);
+            }else if (message.startsWith("#getCategories"))
+            {
+                SQLService ss = new SQLService();
+                ArrayList<String> res;
+                res = ss.getCategories();
+                System.out.println(res);
+                try{
+                    client.sendToClient(res);
+                }catch(IOException ioe){
+                    System.out.println(ioe.toString());
+                }
+            }else if (message.startsWith("#getTopic")){
+                String category;
+                category = message.substring(message.indexOf("")+1);
+                SQLService ss = new SQLService();
+                ArrayList<String> res = new ArrayList<>();
+                res = ss.getSQLResults("Category",category);
             }else
             {
                 try

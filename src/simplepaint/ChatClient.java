@@ -7,6 +7,7 @@ package simplepaint;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 /**
@@ -82,6 +83,8 @@ public class ChatClient extends AbstractClient
        clientUI.display(((Message)msg));
     }else if(msg instanceof ImageIcon){
        clientUI.display(((ImageIcon)msg));
+    }else if(msg instanceof ArrayList){
+       clientUI.display((ArrayList<String>)msg);
     }
   }
 

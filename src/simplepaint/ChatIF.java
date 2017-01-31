@@ -1,6 +1,7 @@
 package simplepaint;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 
@@ -16,4 +17,6 @@ public interface ChatIF
   public abstract void display(ImageIcon image);
   
   public abstract void display(Message m);
+  
+  public abstract void display(ArrayList<String> al);
 }

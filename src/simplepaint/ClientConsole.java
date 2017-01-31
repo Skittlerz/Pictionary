@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -358,6 +359,21 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
           System.out.println(e);
       }
   }
+  
+  public void display(ArrayList<String> al)
+  {
+      try
+      { 
+            for(int i = 0; i < al.size();i++){
+                StyleConstants.setForeground(keyWord, Color.BLACK);
+                doc.insertString(doc.getLength(),(String.valueOf(i+1)+". "+al.get(i)+newline), keyWord );
+            }
+      }catch(Exception e)
+      {
+          System.out.println(e.toString());
+      }
+  }
+      
      
 
   
