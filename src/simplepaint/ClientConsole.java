@@ -65,6 +65,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   SimpleAttributeSet keyWord;
   JTextField input;
   Label lblTimerCount, lblScoreCount;
+  Pictionary game;
   
   private final static String newline = "\n";
   
@@ -268,12 +269,17 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
         {
             if(!validateTextBox())
             {   
-               
-                Message msg = new Message();
-                msg.setMessage(input.getText());
-                msg.setTag(TAG[num]);
-                client.handleMessageFromClientUI(msg);
-                input.setText("");
+                
+                if(input.getText().startsWith("#getTarget") ||
+                        input.getText().startsWith("#getCategories") ||
+                        input.getText().startsWith("#guess"))
+                {
+                   
+                    handlePictionary();
+                }else
+                {
+                    handleMessage();
+                }
                 
             }
         }
@@ -281,6 +287,30 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     }
   
   //Instance methods ************************************************
+    
+   public void handleMessage(){
+       
+       Message msg = new Message();
+       msg.setMessage(input.getText());
+       msg.setTag(TAG[num]);
+       client.handleMessageFromClientUI(msg);
+       input.setText("");
+   }
+   
+   public void handlePictionary(){
+       
+       if (this.game == null){
+           display("No active game in progress. Type #play to start.");
+           input.setText("");
+       }else{
+           game.setMessage(input.getText());
+           System.out.println("handlePictionary: "+game.getMessage());
+           input.setText("");
+           client.handleMessageFromClientUI(game);
+           
+       }
+       
+   }
   
     public boolean validateTextBox(){
         return (input.getText().equals(""));
@@ -326,8 +356,6 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
    */
   public void display(String message) 
   {
-    System.out.println(">>>>> " + message);
-    System.out.println(displayText);
     //displays in console text area 
     try{
     doc.insertString(doc.getLength(),message+newline, keyWord );
@@ -375,7 +403,7 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
                StyleConstants.setForeground(keyWord, Color.BLACK);
                doc.insertString(doc.getLength(),"Target is ", keyWord );
                StyleConstants.setForeground(keyWord, Color.BLUE);
-               doc.insertString(doc.getLength(),al.get(0)+newline, keyWord );
+               doc.insertString(doc.getLength(),(al.get(0)+newline), keyWord );
           }
       }catch(Exception e)
       {
@@ -383,12 +411,18 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       }
   }
   
-  public void display(Pictionary p){
-      try{
+  public void display(Pictionary p){      
+      this.game = p;
+      try
+      {
         if(!p.getMessage().equals(""))
-        {
-            StyleConstants.setForeground(keyWord, Color.RED);
-            doc.insertString(doc.getLength(),p.getMessage(), keyWord);
+        {   
+            StyleConstants.setForeground(keyWord, Color.BLUE);
+            doc.insertString(doc.getLength(),p.getMessage()+newline, keyWord);
+        }
+        if(!p.getAnswer().equals("")){
+            StyleConstants.setForeground(keyWord, Color.BLUE);
+            doc.insertString(doc.getLength(),p.getAnswer()+newline, keyWord);
         }
       }catch(Exception e)
       {

@@ -130,6 +130,10 @@ public class ChatClient extends AbstractClient
                 sendToServer(msg);
             }
             
+        }else if (msg instanceof Pictionary)
+        {
+            System.out.println("handleMessageFromClientUI: "+((Pictionary)msg).getMessage());
+            sendToServer(msg);
         }
     }
     catch(IOException e)

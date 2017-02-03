@@ -5,6 +5,9 @@
  */
 package simplepaint;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -37,6 +40,11 @@ public class TestSQLService {
         res = ss.getTargetByCategory(category);
         System.out.println(res);
         System.out.println(res.size());
+        
+        Pictionary p = new Pictionary();
+       // p.setMessage(ss.getCategories());
+        
+       
     }
     
 }

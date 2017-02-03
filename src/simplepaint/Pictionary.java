@@ -6,6 +6,7 @@
 package simplepaint;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 /**
@@ -13,18 +14,37 @@ import javax.swing.ImageIcon;
  * @author braun1792
  */
 public class Pictionary implements Serializable {
+    //player that is drawing
     private String activePlayer;
-    private String[] otherPlayers;
+    //players guessing; can be up to 3
+    private ArrayList<String> otherPlayers;
+    //info to be passed i.e. categories and answers
+    private ArrayList<String> info;
     private ImageIcon drawing;
     private String answer;
     private String message;
-    private Boolean win = false;
+    private Boolean win;
     private static final long serialVersionUID = 689412375;
     
-    public Pictionary(){}
+    public Pictionary()
+    {
+        otherPlayers = new ArrayList<String>();
+        info = new ArrayList<String>();
+        activePlayer = "";
+        answer = "";
+        message = "";
+        drawing = null;
+        win = false;
+    }
     
     public Pictionary(String p1){
         setActivePlayer(p1);
+        otherPlayers = new ArrayList<String>();
+        info = new ArrayList<String>();
+        answer = "";
+        message = "";
+        drawing = null;
+        win = false;
     }
 
     /**
@@ -44,15 +64,19 @@ public class Pictionary implements Serializable {
     /**
      * @return the otherPlayers
      */
-    public String[] getOtherPlayers() {
+    public ArrayList<String> getOtherPlayers() {
         return otherPlayers;
     }
 
     /**
      * @param otherPlayers the otherPlayers to set
      */
-    public void setOtherPlayers(String[] otherPlayers) {
+    public void setOtherPlayers(ArrayList<String> otherPlayers) {
         this.otherPlayers = otherPlayers;
+    }
+    
+    public void addOtherPlayer(String otherPlayer){
+        this.otherPlayers.add(otherPlayer);
     }
 
     /**
@@ -96,7 +120,14 @@ public class Pictionary implements Serializable {
     public void setMessage(String message) {
         this.message = message;
     }
-
+    
+    public void setWelcomeMessage(String p1){
+        
+        setMessage("Let's play janky Pictionary.\n"+p1+" is going to draw the clue."+
+              " (Don't mess this up " + p1 + ")\n"+"Here's how to play:\n"+"#getCategories - "+
+              "shows categories\n#getTarget [category number] - sets what you have to draw based "+
+              "on your chosen category\n#guess [your guess] - use this command to submit a guess.\n");
+    }
     /**
      * @return the win
      */
@@ -109,6 +140,20 @@ public class Pictionary implements Serializable {
      */
     public void setWin(Boolean win) {
         this.win = win;
+    }
+
+    /**
+     * @return the info
+     */
+    public ArrayList<String> getInfo() {
+        return info;
+    }
+
+    /**
+     * @param info the info to set
+     */
+    public void setInfo(ArrayList<String> info) {
+        this.info = info;
     }
     
 }
