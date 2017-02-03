@@ -24,6 +24,7 @@ public class EchoServer extends AbstractServer
    * The default port to listen on.
    */
   final public static int DEFAULT_PORT = 5556;
+  public static int gameRoom = 0;
   
   //Constructors ****************************************************
   
@@ -52,7 +53,6 @@ public class EchoServer extends AbstractServer
   {     
     if(msg instanceof Message)
     {
-       
         Message m = (Message)msg;
         
         if(m.getMessage().startsWith("#"))
@@ -68,6 +68,8 @@ public class EchoServer extends AbstractServer
     }else if (msg instanceof ImageIcon)
     {
         this.sendToRoom(msg, client);
+    }else if (msg instanceof Pictionary){
+        handlePictionaryGame((Pictionary)msg, client);
     }
   }
     
@@ -122,23 +124,9 @@ public class EchoServer extends AbstractServer
                 String targetUser = message.substring(message.indexOf(" ")+1);
                 System.out.println("Locate method: "+ targetUser);
                 findUser(client, targetUser);
-            }else if (message.startsWith("#getCategories"))
+            }else if (message.startsWith("#play"))
             {
-                SQLService ss = new SQLService();
-                ArrayList<String> res;
-                res = ss.getCategories();
-                System.out.println(res);
-                try{
-                    client.sendToClient(res);
-                }catch(IOException ioe){
-                    System.out.println(ioe.toString());
-                }
-            }else if (message.startsWith("#getTopic")){
-                String category;
-                category = message.substring(message.indexOf("")+1);
-                SQLService ss = new SQLService();
-                ArrayList<String> res = new ArrayList<>();
-                res = ss.getSQLResults("Category",category);
+                initializePictionaryGame(client);
             }else
             {
                 try
@@ -150,6 +138,83 @@ public class EchoServer extends AbstractServer
                 }
             }
         }
+  }
+  
+  public void handlePictionaryGame(Pictionary p, ConnectionToClient client){
+      
+      try{
+      if (p.getMessage().startsWith("#getCategories"))
+        {
+       
+            SQLService ss = new SQLService();
+            ArrayList<String> res;
+            res = ss.getCategories();
+            System.out.println(res);
+            client.sendToClient(res);
+        }else if (p.getMessage().startsWith("#getTarget"))
+        {
+            if(p.getAnswer().equals(""))
+            {               
+                int category;
+                category = Integer.parseInt(p.getMessage().substring(p.getMessage().indexOf(" ")+1));
+                SQLService ss = new SQLService();
+                ArrayList<String> res = new ArrayList<>();
+                res = ss.getTargetByCategory(category);
+                p.setAnswer(res.get(0));
+                client.sendToClient(res);
+            }else
+            {
+                Message m = new Message("Hey bud, target is already set.");
+                client.sendToClient(m);
+            }
+        }else if (p.getMessage().startsWith("#guess"))
+        {
+            String answer = p.getMessage().substring(p.getMessage().indexOf(" ")+1);
+            //check if guess is correct
+            if(p.getAnswer().toUpperCase().equals(answer.toUpperCase()))
+            {
+                p.setWin(Boolean.TRUE);
+            }else{
+                p.setMessage("Try again.");
+                sendToRoom(p,client);
+            }
+        }
+      }catch(Exception e){
+          System.out.println(e.toString());
+      }
+  }
+  
+  public void initializePictionaryGame(ConnectionToClient client)
+  {   
+      Pictionary game = new Pictionary();
+      game.setMessage("Let's play Pictionary.");
+      game.setActivePlayer(client.getInfo("userName").toString());
+      
+      Thread[] clientThreadList = getClientConnections();
+      String room = client.getInfo("room").toString();
+      int j = 0;
+      
+      outerloop:
+      for (int i=0; i<clientThreadList.length; i++)
+      {
+        ConnectionToClient clientProxy = (ConnectionToClient)clientThreadList[i];
+       
+        if(clientProxy.getInfo("room").equals(room))
+        {
+           //put the players in their own game room
+           clientProxy.setInfo("room",String.valueOf(gameRoom));
+           //clientProxy.sendToClient("You are now playing Pictionary. Get ready to guess.");
+           j++;
+           //max three players
+           if(j > 2)
+           {
+               break outerloop;
+           }
+        }
+      }
+      
+      gameRoom++;
+      
   }
   
     

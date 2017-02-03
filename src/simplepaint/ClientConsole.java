@@ -363,11 +363,33 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   public void display(ArrayList<String> al)
   {
       try
-      { 
+      {
+          if(al.size() > 1)
+          {
             for(int i = 0; i < al.size();i++){
                 StyleConstants.setForeground(keyWord, Color.BLACK);
                 doc.insertString(doc.getLength(),(String.valueOf(i+1)+". "+al.get(i)+newline), keyWord );
             }
+          }else
+          {
+               StyleConstants.setForeground(keyWord, Color.BLACK);
+               doc.insertString(doc.getLength(),"Target is ", keyWord );
+               StyleConstants.setForeground(keyWord, Color.BLUE);
+               doc.insertString(doc.getLength(),al.get(0)+newline, keyWord );
+          }
+      }catch(Exception e)
+      {
+          System.out.println(e.toString());
+      }
+  }
+  
+  public void display(Pictionary p){
+      try{
+        if(!p.getMessage().equals(""))
+        {
+            StyleConstants.setForeground(keyWord, Color.RED);
+            doc.insertString(doc.getLength(),p.getMessage(), keyWord);
+        }
       }catch(Exception e)
       {
           System.out.println(e.toString());

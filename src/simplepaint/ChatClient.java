@@ -85,6 +85,8 @@ public class ChatClient extends AbstractClient
        clientUI.display(((ImageIcon)msg));
     }else if(msg instanceof ArrayList){
        clientUI.display((ArrayList<String>)msg);
+    }else if(msg instanceof Pictionary){
+        clientUI.display((Pictionary)msg);
     }
   }
 

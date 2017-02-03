@@ -19,4 +19,6 @@ public interface ChatIF
   public abstract void display(Message m);
   
   public abstract void display(ArrayList<String> al);
+  
+  public abstract void display(Pictionary p);
 }

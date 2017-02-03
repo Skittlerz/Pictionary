@@ -33,9 +33,6 @@ public class SQLService {
  
     public SQLService(){
         
-        
-	results = new ArrayList<>();
-        
         try{
             writer = new FileWriter("MyLog.txt", true);
             bufferedWriter = new BufferedWriter(writer);
@@ -44,18 +41,15 @@ public class SQLService {
         }
     }
     
-    public ArrayList<String> getSQLResults(String field, String criteria){
+    public ArrayList<String> getTargetByCategory(int categoryId){
         
-        
-        //String field;
-        //String criteria;
-        
-        //searches request string for field value and stores it (SQL column name)
-        //field = request.substring(request.indexOf("Field=")+6,request.indexOf("Criteria="));
-        //criteria = request.substring(request.indexOf("Criteria="+9));
-       
-        
-        SQLCommand = "SELECT Target FROM Answers WHERE " + field + " = " + criteria;
+        SQLCommand = "SELECT Target " +
+                        "FROM (" +
+                            "SELECT * " +
+                            "FROM   Answers " +
+                            "WHERE CategoryId = "+categoryId+
+                            " ORDER BY DBMS_RANDOM.RANDOM) " +
+                    "WHERE ROWNUM = 1";
         
         doWork("Target");
         
@@ -97,6 +91,7 @@ public class SQLService {
     
     public void doWork(String columnName){
         
+        results = new ArrayList<>();
         //executes SQL statement and returns result set
         Statement stmt=null; 
         //stores table of data (database result set)
@@ -115,7 +110,6 @@ public class SQLService {
             //parameters: JDBC driver, name of database, userID, password
             conn = DriverManager.getConnection("jdbc:oracle:thin:@bisoracle.siast.sk.ca:1521:ACAD","cistu026","databasefun");
             
-            //("jdbc:oracle:thin:@bisoracle.siast.sk.ca:1521:ACAD","cistu026","databasefun");
             stmt = conn.createStatement();
             rset = stmt.executeQuery(SQLCommand);
             rsmd = rset.getMetaData();
@@ -127,14 +121,13 @@ public class SQLService {
             while (rset.next()){
                 
                 results.add(rset.getString(columnName));  
-                System.out.println(rset.getString(columnName));
             }
             
             //close all open connections and what not, no memory leaks here!
             rset.close();
             stmt.close();
             conn.close();
-            bufferedWriter.close();
+            bufferedWriter.flush();
             
         }catch(Exception e){
             
@@ -148,7 +141,7 @@ public class SQLService {
                 bufferedWriter.write("Time: "+ timeStamp);
                 bufferedWriter.newLine();
 
-                bufferedWriter.close();
+                bufferedWriter.flush();
                 
             }catch (Exception ex){
                 System.out.println(ex.toString());
