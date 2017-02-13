@@ -238,7 +238,8 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   }
 
   @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void actionPerformed(ActionEvent ae) 
+    {
         //gets button that was clicked and executes appropriate action
         if(ae.getSource() == load)
         {
@@ -271,7 +272,6 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
             {   
                 
                 if(input.getText().startsWith("#getTarget") ||
-                        input.getText().startsWith("#getCategories") ||
                         input.getText().startsWith("#guess"))
                 {
                    
@@ -288,8 +288,8 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
   
   //Instance methods ************************************************
     
-   public void handleMessage(){
-       
+   public void handleMessage()
+   {
        Message msg = new Message();
        msg.setMessage(input.getText());
        msg.setTag(TAG[num]);
@@ -297,22 +297,22 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
        input.setText("");
    }
    
-   public void handlePictionary(){
-       
+   public void handlePictionary()
+   {
        if (this.game == null){
-           display("No active game in progress. Type #play to start.");
-           input.setText("");
-       }else{
+          display("No active game in progress. Type #play to start.");
+          input.setText("");
+       }else
+       {
            game.setMessage(input.getText());
            System.out.println("handlePictionary: "+game.getMessage());
            input.setText("");
            client.handleMessageFromClientUI(game);
-           
-       }
-       
+       }  
    }
   
-    public boolean validateTextBox(){
+    public boolean validateTextBox()
+    {
         return (input.getText().equals(""));
     }
     
@@ -364,20 +364,22 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
     }
   }
   
-  public void display(ImageIcon ii){
+  public void display(ImageIcon ii)
+  {
       DrawingPanel.loadDrawing(ii);
   }
   
-  public void displayInput(String message){
+  public void displayInput(String message)
+  {
       try{
         doc.insertString(doc.getLength(),">" + message+newline, keyWord );
       }catch(Exception e){
           System.out.println(e);
       }
-      
   }
   
-  public void display(Message m){
+  public void display(Message m)
+  {
       try{
         StyleConstants.setForeground(keyWord, m.getTag());
         doc.insertString(doc.getLength(),m.getUserName()+": ", keyWord );
@@ -411,7 +413,8 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
       }
   }
   
-  public void display(Pictionary p){      
+  public void display(Pictionary p)
+  {      
       this.game = p;
       try
       {

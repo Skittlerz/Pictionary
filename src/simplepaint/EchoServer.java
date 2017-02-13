@@ -131,6 +131,12 @@ public class EchoServer extends AbstractServer
             {   
                 System.out.println("Play initialized");
                 initializePictionaryGame(client);
+            }else if (message.startsWith("#getCategories"))
+            {
+                SQLService ss = new SQLService();
+                ArrayList<String> res = new ArrayList<String>();
+                res = ss.getCategories();
+                sendToRoom(res,client);
             }else
             {
                 try
@@ -150,15 +156,7 @@ public class EchoServer extends AbstractServer
       
       try{
           
-      if (p.getMessage().startsWith("#getCategories"))
-        {
-       
-            SQLService ss = new SQLService();
-            ArrayList<String> res = new ArrayList<String>();
-            res = ss.getCategories();
-            sendToRoom(res,client);
-            
-        }else if(p.getMessage().startsWith("#getTarget"))
+       if(p.getMessage().startsWith("#getTarget"))
         {
             System.out.println("command get target issued");
             if(p.getAnswer().equals(""))
