@@ -120,8 +120,6 @@ public class EchoServer extends AbstractServer
                 ((Message)msg).setMessage(message);
                 sendToRoom(msg, room);
                 
-            }else if(message.startsWith("#start"))
-            {   
             }else if(message.startsWith("#locate"))
             {   
                 String targetUser = message.substring(message.indexOf(" ")+1);
@@ -168,12 +166,14 @@ public class EchoServer extends AbstractServer
                 System.out.println(res);
                 res = ss.getTargetByCategory(category);
                 System.out.println(res);
-                p.setAnswer(res.get(0));
+                p.setAnswer(res.get(0)+"\n");
                 sendToRoom(p,client);
             }else
             {
-                Message m = new Message("Hey bud, target is already set.");
-                client.sendToClient(m);
+                //Message m = new Message("Hey bud, target is already set.");
+                //client.sendToClient(m);
+                p.setMessage("Hey bud, target is already set.");
+                client.sendToClient(p);
             }
         }else if (p.getMessage().startsWith("#guess"))
         {
@@ -182,12 +182,14 @@ public class EchoServer extends AbstractServer
             if(p.getAnswer().toUpperCase().equals(answer.toUpperCase()))
             {
                 p.setWin(Boolean.TRUE);
-            }else{
+            }else
+            {
                 p.setMessage("Try again.");
                 sendToRoom(p,client);
             }
         }
-      }catch(Exception e){
+      }catch(Exception e)
+      {
           System.out.println(e.toString());
       }
   }
@@ -218,10 +220,7 @@ public class EchoServer extends AbstractServer
                game.addOtherPlayer(clientProxy.getInfo("userName").toString());
                j++;
                //max three players guessing
-               if(j > 2)
-               {
-                   break outerloop;
-               }
+               if(j > 2){break outerloop;}
             }
         }
       }

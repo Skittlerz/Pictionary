@@ -272,7 +272,8 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
             {   
                 
                 if(input.getText().startsWith("#getTarget") ||
-                        input.getText().startsWith("#guess"))
+                        input.getText().startsWith("#guess") || 
+                        input.getText().startsWith("#play"))
                 {
                    
                     handlePictionary();
@@ -299,10 +300,23 @@ public class ClientConsole extends JFrame implements ActionListener, ChatIF
    
    public void handlePictionary()
    {
-       if (this.game == null){
+       if(this.game == null && input.getText().startsWith("#play"))
+       {
+           Message msg = new Message();
+           msg.setMessage(input.getText());
+           msg.setTag(TAG[num]);
+           client.handleMessageFromClientUI(msg);
+           input.setText("");
+       }
+       else if (this.game != null && input.getText().startsWith("#play"))
+       {
+           display("Active game already in progress!");
+           input.setText("");
+       }else if(this.game == null)
+       {
           display("No active game in progress. Type #play to start.");
           input.setText("");
-       }else
+       }else 
        {
            game.setMessage(input.getText());
            System.out.println("handlePictionary: "+game.getMessage());
