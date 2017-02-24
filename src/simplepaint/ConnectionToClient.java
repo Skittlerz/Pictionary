@@ -207,9 +207,6 @@ public class ConnectionToClient extends Thread
         // This block waits until it reads a message from the client
         // and then sends it for handling by the server
         msg = input.readObject();
-        if(msg instanceof Pictionary){
-        System.out.println("ConnectionToClient run: "+((Pictionary)msg).getMessage());
-        }
         server.receiveMessageFromClient(msg, this);
       }
     }

@@ -27,6 +27,7 @@ import javax.swing.*;
  * a stand-alone application that has exactly the same functionality
  * as the applet.
  */
+//This is a standalone application. Not part of the pictionary game.
 public class SimplePaint extends JApplet {
    
    /**
